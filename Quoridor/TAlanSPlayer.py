@@ -18,7 +18,8 @@ class TAlanSPlayer():
         # if opponent out of fences and player is closer, immediately rush goal line
         two_player_enemy_ind = (board.current_player + 1) % 2
         player_path = self.path_to_win(board, board.current_player)
-        if len(board.pawns) == 2 and board.fences[two_player_enemy_ind] == 0 and len(self.path_to_win(board, board.current_player)) <= len(self.path_to_win(board, two_player_enemy_ind)):
+        start_enemy_path = self.path_to_win(board, two_player_enemy_ind)
+        if len(board.pawns) == 2 and board.fences[two_player_enemy_ind] == 0 and len(player_path) <= len(start_enemy_path):
             return QuoridorMove.move_pawn(player_path[0], board.current_player)
 
         # try to move forward if in starting position
@@ -28,11 +29,11 @@ class TAlanSPlayer():
                 if(self.moves_in_right_direction(board, move.coord, board.current_player)):
                     self.save_pos(board)
                     return move
+        next_enemy = (board.current_player + math.floor(len(board.pawns)/2)) % len(board.pawns)
 
         # try to place vertical fence next to player
         # if board.fences[board.current_player] > 8:
         if board.fences[board.current_player] > 8:
-            next_enemy = (board.current_player + 1) % len(board.pawns)
 
             if board.fences[board.current_player] == 10:
                 # try to immediately place vertical wall against opponent (intermediate opening)
@@ -52,12 +53,18 @@ class TAlanSPlayer():
                     return QuoridorMove.add_fence(test_fence, board.current_player)
             # 30% chance of trying to directly block enemy with fence
             if random.randint(0, 10) > 7:
-                enemy_path = self.path_to_win(board, next_enemy)
-                for fence_move in board.get_legal_fences(board.current_player):
-                    potential_enemy_path = self.path_to_win(self.game.getNextState(board, board.current_player, fence_move)[0], next_enemy)
-                    if len(potential_enemy_path) > len(enemy_path):
-                        self.save_pos(board)
-                        return fence_move
+                fence_move = self.get_fence_block_move(board, next_enemy)
+                if fence_move != None:
+                    self.save_pos(board)
+                    return fence_move
+        
+
+        if random.randint(0, 10) > 5 and len(start_enemy_path) < len(player_path):
+            fence_block = self.get_fence_block_move(board, next_enemy)
+            if fence_block != None:
+                self.save_pos(board)
+                return fence_block
+
         depth = 2
         best_heuristic = None
         best_move = None
@@ -165,6 +172,20 @@ class TAlanSPlayer():
                 if not to_skip: nodes_to_search.append(new_child_node)
         print("didn't find path, returning rand move")
         return [QuoridorMove.move_pawn(random.choice(board.get_legal_move_positions(board.pawns[player])), player)]
+
+    def get_fence_block_move(self, board, next_enemy):
+        enemy_path = self.path_to_win(board, next_enemy)
+        best_block = None
+        best_path_len = math.inf
+        for fence_move in board.get_legal_fences(board.current_player):
+            potential_enemy_path = self.path_to_win(self.game.getNextState(board, board.current_player, fence_move)[0], next_enemy)
+            if len(potential_enemy_path) > len(enemy_path) and len(potential_enemy_path) < best_path_len:
+                self.save_pos(board)
+                best_block = fence_move
+                best_path_len = len(potential_enemy_path)
+        if best_block is not None:
+            self.save_pos(board)
+        return best_block
 
     # Determines if a given move moves the pawn toward the right point
     def moves_in_right_direction(self, board, new_coord, player = -1):
