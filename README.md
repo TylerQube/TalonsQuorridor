@@ -1,3 +1,13 @@
+# Talons Qorridor
+
+A Python implementation of an AI designed to play the boardgame Quorridor, which also won a single elimination tournament at the Illinois Math & Science Academy's 2022 Intersession "Teach Your Computer to Play Games".
+
+This repository contains the game-playing AI, as well as all scaffold code required to simulate a game against another player or AI.
+
+Talons uses the A* pathfinding algorithm to determine the shortests path to victory, as well as minimax to examine several moves ahead and select the most advantageous option.
+
+When making a move, Talons compares the move that will reduce its own distance to victory to the move that will most hamper the opponent's progress.
+
 # Intersession2022
 
 Requirements: numpy tqdm pygame
