@@ -2,7 +2,7 @@
 
 A Python implementation of an AI designed to play the boardgame Quorridor, which also won a single elimination tournament at the Illinois Math & Science Academy's 2022 Intersession "Teach Your Computer to Play Games".
 
-This repository contains the game-playing AI, as well as all scaffold code required to simulate a game against another player or AI.
+This repository contains our game-playing AI in /Qorridor/TAlanSPlayer.py, as well as all scaffold code (written by the instructor) required to simulate a game against another player or AI.
 
 Talons uses the A* pathfinding algorithm to determine the shortests path to victory, as well as minimax to examine several moves ahead and select the most advantageous option.
 
@@ -17,10 +17,6 @@ Installing these packages should be as simple as opening command prompt and typi
 pip install [package name]
 
 If you know what it is I recommend using a virtual environment but if you don't that's fine this command works anyway. If it doesn't work then ask me about it.
-
-Please rename and submit YOURNAMESPlayer.py
-
-main.py can be modified for testing purposes. You shouldn't have to modify any other files to work with the code and I will not be using any modifications you make elsewhere. Feel free to look around if you want.
 
 Here's the step-by-step version if you have simple IDLE in Windows:
 
